@@ -1,3 +1,4 @@
+pip
 cv2
 numpy
 os
