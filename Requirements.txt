@@ -1,7 +1,7 @@
 pip
-cv2
+opencv-python
 numpy
-os
 streamlit
 pandas
 scikit-learn
+matplotlib
