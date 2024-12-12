@@ -1,38 +1,34 @@
+import streamlit as st
 import cv2
 import numpy as np
-import os
 
-# Path ke gambar
-image_path = "FGO.jpg"  # Ganti dengan nama file gambar Anda
-output_dir = "output_images"  # Direktori untuk menyimpan gambar hasil
-os.makedirs(output_dir, exist_ok=True)  # Buat direktori jika belum ada
+# Fungsi untuk mengecilkan ukuran gambar ke dimensi tetap (opsional, jika tetap dibutuhkan)
+def resize_to_fixed_size(img, width=300, height=300):
+    return cv2.resize(img, (width, height), interpolation=cv2.INTER_AREA)
 
-# Cek apakah file ada
-if not os.path.exists(image_path):
-    print(f"Error: File '{image_path}' tidak ditemukan. Periksa path-nya.")
-else:
-    # Buka file gambar
-    image = cv2.imread(image_path)
+# Menu pada Streamlit
+menu = st.sidebar.selectbox("Menu", ["Nama Pengembang", "Aplikasi Manipulasi Gambar"])
 
-    if image is None:
-        print("Error: Gambar tidak dapat dibuka. Pastikan file adalah format gambar yang valid.")
-    else:
-        # Dimensi gambar
-        rows, cols = image.shape[:2]
+if menu == "Nama Pengembang":
+    st.title("Nama Pengembang")
+    st.write("Muhammad Fikry Haikal")
 
-        # Fungsi untuk mengecilkan ukuran gambar ke dimensi tetap
-        def resize_to_fixed_size(img, width=300, height=300):
-            new_size = (width, height)
-            return cv2.resize(img, new_size, interpolation=cv2.INTER_AREA)
+elif menu == "Aplikasi Manipulasi Gambar":
+    st.title("Aplikasi Manipulasi Gambar")
 
-        # Ukuran gambar yang diinginkan
-        target_width = 300
-        target_height = 300
+    # Upload file gambar
+    uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png"])
+    if uploaded_file is not None:
+        # Baca file gambar
+        file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+        image = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
-        # 1. Gambar Asli
-        original_image_resized = resize_to_fixed_size(image, target_width, target_height)
-        cv2.imwrite(os.path.join(output_dir, "original_image.jpg"), original_image_resized)
-        cv2.imshow("Original Image", original_image_resized)
+        if image is not None:
+            # Dimensi gambar asli
+            rows, cols = image.shape[:2]
+
+            # 1. Gambar Asli
+            st.image(image, caption="Original Image", channels="BGR")
 
         # 2. Rotasi
         angle = 45  # Rotasi 45 derajat
